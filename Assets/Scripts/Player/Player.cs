@@ -1,5 +1,9 @@
+using Cinemachine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.U2D.Animation;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -8,12 +12,11 @@ public class Player : MonoBehaviour
 {
     private PlayerAnimator playerAnimator;
     private PlayerController playerController;
+    
 
     private Vector2 pointerInput, movementInput;
 
-    public Vector2 PointerInput => pointerInput;
-
-    //private Hammer hammer;
+    public Vector2 PointerPosition => pointerInput;
 
     [SerializeField]
     private InputActionReference movement, attack, interact, pointerPosition;
@@ -24,18 +27,22 @@ public class Player : MonoBehaviour
         playerController = GetComponent<PlayerController>();
     }
 
-
-    private void Animate()
-    {
-        playerAnimator.Animate(movementInput);
-    }
-
     private void Update()
     {
-        //pointerInput = Camera.main.ScreenToWorldPoint(pointerPosition.action.ReadValue<Vector2>());
-        movementInput = movement.action.ReadValue<Vector2>();
-        playerController.MovementInput = movementInput.normalized;
+        pointerInput = GetPointerInput();
 
-        Animate();
+        movementInput = movement.action.ReadValue<Vector2>();
+
+        playerController.MovementInput = movementInput.normalized;
+        playerAnimator.PointerPosition = pointerInput;
+
+        playerAnimator.Animate();
+    }
+
+    private Vector2 GetPointerInput() 
+    {
+        Vector3 mousePos = pointerPosition.action.ReadValue<Vector2>();
+        mousePos.z = Camera.main.nearClipPlane;
+        return Camera.main.ScreenToWorldPoint(mousePos);
     }
 }
