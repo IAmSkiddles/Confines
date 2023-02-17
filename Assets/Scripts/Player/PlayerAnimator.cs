@@ -31,12 +31,12 @@ public class PlayerAnimator : MonoBehaviour
         animator.SetFloat("Horizontal", direction.x);
         animator.SetFloat("Vertical", direction.y);
 
+        // Weapon rotation
         float rotation_z = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         weaponTransform.rotation = Quaternion.Euler(0f, 0f, rotation_z);
 
         Vector2 scale = weaponTransform.localScale;
 
-        // Rotate the weapon
         if (Mathf.Abs(rotation_z) > 90)
         {
             scale.y = -1;
@@ -63,15 +63,15 @@ public class PlayerAnimator : MonoBehaviour
         // Place the weapon behind the player sprite when the hammer is above
         if (weaponTransform.eulerAngles.z > 0 && weaponTransform.eulerAngles.z < 180) 
         { 
-            playerWeapon.GetComponent<SpriteRenderer>().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder - 1;
+            playerWeapon.GetComponentInChildren<SpriteRenderer>().sortingOrder = GetComponentInChildren<SpriteRenderer>().sortingOrder - 1;
         } else {
-            playerWeapon.GetComponent<SpriteRenderer>().sortingOrder = GetComponent<SpriteRenderer>().sortingOrder + 1;
+            playerWeapon.GetComponentInChildren<SpriteRenderer>().sortingOrder = GetComponentInChildren<SpriteRenderer>().sortingOrder + 1;
         }
     }
 
     void Flip()
     {
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
         sr.flipX = !sr.flipX;
 
         flipped = !flipped;

@@ -27,6 +27,20 @@ public class Player : MonoBehaviour
         playerController = GetComponent<PlayerController>();
     }
 
+    public void OnEnable()
+    {
+        attack.action.performed += PerformAttack;
+    }
+
+    public void OnDisable()
+    {
+        attack.action.performed -= PerformAttack;
+    }
+    private void PerformAttack(InputAction.CallbackContext obj)
+    {
+        playerController.Attack();
+    }
+
     private void Update()
     {
         pointerInput = GetPointerInput();
