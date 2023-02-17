@@ -12,11 +12,15 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 2.0f;
     public float deceleration = 4.0f;
     public float attackDelay = 0.3f;
-    public Vector2 MovementInput { get; set; }
 
+    [HideInInspector]
+    public Vector2 MovementInput { get; set; }
+    [HideInInspector]
     public bool attacking = false;
-    private Vector2 oldMovementInput;
+    [HideInInspector]
     public float speed;
+
+    private Vector2 oldMovementInput;
 
     private Rigidbody2D rb2d;
     public Animator animator;
