@@ -85,13 +85,11 @@ public class PlayerController : MonoBehaviour
 
     public void DetectColliders()
     {
-        foreach (Collider2D collider in Physics2D.OverlapCircleAll(hitBox.position, hitBoxRadius))
+        Collider2D collider = Physics2D.OverlapCircle(hitBox.position, hitBoxRadius);
+        Health health;
+        if (health = collider.GetComponent<Health>())
         {
-            Health health;
-            if (health = collider.GetComponent<Health>())
-            {
-                health.OnHit(1, gameObject);
-            }
+            health.OnHit(1, gameObject);
         }
     }
 }  
