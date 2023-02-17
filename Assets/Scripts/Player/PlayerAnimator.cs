@@ -8,7 +8,7 @@ public class PlayerAnimator : MonoBehaviour
 {
     private Animator animator;
     private PlayerController playerController;
-    private GameObject playerWeapon;
+    public GameObject playerWeapon;
 
     private bool flipped = false;
 
@@ -18,7 +18,6 @@ public class PlayerAnimator : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
-        playerWeapon = transform.GetChild(0).gameObject;
     }
 
     public void Animate()
