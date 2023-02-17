@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerAnimator : MonoBehaviour
 {
@@ -17,12 +18,14 @@ public class PlayerAnimator : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
-        playerWeapon = transform.Find("Weapon").gameObject;
+        playerWeapon = transform.GetChild(0).gameObject;
     }
 
     public void Animate()
     {
         animator.SetFloat("Speed", playerController.speed);
+
+        if (playerController.attacking) return;
 
         Transform weaponTransform = playerWeapon.transform;
         Vector2 direction = (PointerPosition - (Vector2) transform.position).normalized;
@@ -33,6 +36,7 @@ public class PlayerAnimator : MonoBehaviour
 
         // Weapon rotation
         float rotation_z = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
         weaponTransform.rotation = Quaternion.Euler(0f, 0f, rotation_z);
 
         Vector2 scale = weaponTransform.localScale;

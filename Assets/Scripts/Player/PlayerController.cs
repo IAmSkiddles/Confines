@@ -12,17 +12,21 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 2.0f;
     public float deceleration = 4.0f;
     public float attackDelay = 0.3f;
+    public float hitBoxRadius;
 
     [HideInInspector]
     public Vector2 MovementInput { get; set; }
     [HideInInspector]
-    public bool attacking = false;
+    public bool attackBlocked = false;
     [HideInInspector]
     public float speed;
+
+    public bool attacking { get; private set; }
 
     private Vector2 oldMovementInput;
 
     private Rigidbody2D rb2d;
+    public Transform hitBox;
     public Animator animator;
 
     private void Awake()
@@ -53,16 +57,41 @@ public class PlayerController : MonoBehaviour
 
     public void Attack() 
     {
-        if (attacking) return;
+        if (attackBlocked) return;
         animator.SetTrigger("Attack");
         attacking = true;
+        attackBlocked = true;
 
         StartCoroutine(DelayAttack());
+    }
+
+    public void ResetAttacking()
+    {
+        attacking = false;
     }
 
     private IEnumerator DelayAttack()
     {
         yield return new WaitForSeconds(attackDelay);
-        attacking = false;
+        attackBlocked = false;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Vector3 position = hitBox == null ? Vector3.zero : hitBox.position;
+        Gizmos.DrawWireSphere(position, hitBoxRadius);
+    }
+
+    public void DetectColliders()
+    {
+        foreach (Collider2D collider in Physics2D.OverlapCircleAll(hitBox.position, hitBoxRadius))
+        {
+            Health health;
+            if (health = collider.GetComponent<Health>())
+            {
+                health.OnHit(1, gameObject);
+            }
+        }
     }
 }  
