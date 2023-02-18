@@ -7,12 +7,14 @@ using UnityEngine.Events;
 public class Health : MonoBehaviour
 {
     [SerializeField]
-    private float health, maxHealth;
+    private float health, maxHealth, invincibilityTimer, invincibilityDeltaTime;
 
     public UnityEvent<GameObject> OnHitEvent, OnDeathEvent;
 
     [SerializeField]
     private bool alive = true;
+
+    private bool invincible = false;
 
     public void InitializeHealth(int healthValue)
     {
@@ -21,22 +23,58 @@ public class Health : MonoBehaviour
         alive = true;
     }
 
-    public void OnHit(int amount, GameObject attacker)
+    public float GetHealth()
     {
-        if (!alive) return;
+        return health;
+    }
+
+    public float GetMaxHealth()
+    {
+        return maxHealth;
+    }
+
+    private IEnumerator Blink()
+    {
+        SpriteRenderer playerSprite = GetComponent<SpriteRenderer>();
+        playerSprite.enabled = false;
+        yield return new WaitForSeconds(0.05f);
+        playerSprite.enabled = true;
+    }
+
+    private IEnumerator InvincibilityFrames()
+    {
+        invincible = true;
+        for (float i = 0; i < invincibilityTimer; i += invincibilityDeltaTime)
+        {
+            StartCoroutine(Blink());
+
+            yield return new WaitForSeconds(invincibilityDeltaTime);
+        }
+        
+        invincible = false;
+    }
+
+    public void OnHit(int damage, GameObject attacker)
+    {
+        if (!alive || invincible) return;
         if (attacker.layer == gameObject.layer) return;
 
-        health -= amount;
+        health = Mathf.Clamp(health - damage, 0, maxHealth);
 
         if (health > 0) 
-        { 
+        {
+            StartCoroutine(InvincibilityFrames());
             OnHitEvent?.Invoke(attacker);
         }
         else
         {
             OnDeathEvent?.Invoke(attacker);
             alive = false;
-            Destroy(gameObject);
         }
+    }
+
+    public void Destory()
+    {
+        Destroy(gameObject);
     }
 }
